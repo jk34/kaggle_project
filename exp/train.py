@@ -13,7 +13,8 @@ from sklearn.model_selection import KFold
 warnings.filterwarnings("ignore")
 
 
-def train_model(X, Y, X_test=None, n_fold=10, params=None, model_type='lgb', plot_feature_importance=False, model=None):
+def train_model(X, Y, X_test=None, n_fold=10, params=None, model_type='sklearn', plot_feature_importance=False,
+                model=None):
     """Taken from the `Earthquakes FE. More features and samples` kaggle notebook"""
     oof = np.zeros(len(X))
     if X_test is not None:

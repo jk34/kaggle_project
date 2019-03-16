@@ -34,6 +34,11 @@ def random_search(num_searches=40, **kwargs):
     product_dts = []
     product_dts_json = []
 
+    # if num_searches is greater than 80% cartesian product set size, then call grid search instead
+    # NOTE: 80% is used so random search doesn't take forever to find a not selected set of hyper-parameter choices
+    cs_prod_len = float(sum[len(val) for val in vals])
+    if num_searches > .80 * cs_prod_len:
+        return grid_search(**kwargs)
     for _ in range(num_searches):
         not_contained = False
         # check to make sure hyper-parameter options haven't previously been seen
