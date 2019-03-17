@@ -28,15 +28,15 @@ def random_search(num_searches=40, **kwargs):
     Lot of content taken from https://stackoverflow.com/questions/5228158/cartesian-product-of-a-dictionary-of-lists.
     """
     # hyper-parameter arg names
-    keys = kwargs.keys()
+    hyps = kwargs.keys()
     # hyper-parameter options
-    vals = kwargs.values()
-    product_dts = []
-    product_dts_json = []
+    hyps_vals = kwargs.values()
+    params_dts = []
+    params_dts_json = []
 
     # if num_searches is greater than 80% cartesian product set size, then call grid search instead
     # NOTE: 80% is used so random search doesn't take forever to find a not selected set of hyper-parameter choices
-    cs_prod_len = float(sum[len(val) for val in vals])
+    cs_prod_len = float(sum([len(val) for val in hyps_vals]))
     if num_searches > .80 * cs_prod_len:
         return grid_search(**kwargs)
     for _ in range(num_searches):
@@ -44,22 +44,22 @@ def random_search(num_searches=40, **kwargs):
         # check to make sure hyper-parameter options haven't previously been seen
         while not not_contained:
             # retrieve the arg-values tuples for all hyper-parameter args in random order
-            keys_and_vals = sample(list(zip(keys, vals)), len(keys))
-            keys, vals = zip(*keys_and_vals)
+            hyps_and_hyps_vals = sample(list(zip(hyps, hyps_vals)), len(hyps))
+            hyps, hyps_vals = zip(*hyps_and_hyps_vals)
             # randomize the hyper-parameter options for each hyper-parameter arg
-            vals = [sample(val, len(val)) for val in vals]
+            hyps_vals = [sample(val, len(val)) for val in hyps_vals]
             # get one set of possible hyper-parameters for a model
-            instance = next(product(*vals))
+            instance = next(product(*hyps_vals))
             # convert the instance to a dictionary
-            product_dt = dict(zip(keys, instance))
+            params_dt = dict(zip(hyps, instance))
             # get the json string from the dict
-            product_dt_json = json.dumps(product_dt, sort_keys=True)
+            params_dt_json = json.dumps(params_dt, sort_keys=True)
             # add the instance to the experiment list if json hasn't been seen
-            if product_dt_json not in product_dts_json:
-                product_dts.append(product_dt)
-                product_dts_json.append(product_dt_json)
+            if params_dt_json not in params_dts_json:
+                params_dts.append(params_dt)
+                params_dts_json.append(params_dt_json)
                 not_contained = True
-    return product_dts
+    return params_dts
 
 
 # grid search function
